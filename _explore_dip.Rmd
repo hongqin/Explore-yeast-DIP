@@ -2,5 +2,49 @@
 
 ```{r}
 list.files()
+#library(xlsx)
+tb = read.table("Scere20170205.txt", header=T, sep="\t", row.names=NULL)
+#tb = read.xlsx("Scere20170205.xlsx", 1)
 ```
 
+Visual check show that there are interactions between yeast proteins and non-yeast proteins (such as human and flys)
+Some the column names are move by one-column. 
+
+```{r}
+big2small = function(char1, char2) {
+  if ( char1 > char2) {
+    return( c( char1, char2) )
+  } else {
+    return( c(char2, char1) )
+  }
+}
+```
+
+```{r}
+for( i in 1:length(tb[,1])) {
+#for( i in 1:19) {
+  pair = big2small(as.character(tb[i, 1]), as.character(tb[i, 2]))
+  tb$pairID[i] = paste( pair[1], pair[2], sep = "::")
+}
+```
+
+
+
+How many ExE interactions? 
+```{r}
+unique_EEpairs = unique(tb$pairID)
+all_names = c();
+for( pair in unique_EEpairs) {
+  all_names = c(all_names, unlist( strsplit(pair, split="::") ))
+  
+}
+```
+
+
+
+```{r}
+degree = table(all_names)
+str(degree)
+mean(degree)
+median(degree)
+```
